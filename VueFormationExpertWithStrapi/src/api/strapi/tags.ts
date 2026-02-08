@@ -1,5 +1,5 @@
 import { axiosClient } from '@/api/axios';
-import { fromStrapiTag } from '@/utils/strapiMappers';
+import { fromStrapiTag } from '@/mapper/strapiMappers';
 import type { StrapiTagType } from '@/types/StrapiTagType';
 import type { TagType } from '@/types/TagType';
 
@@ -8,14 +8,14 @@ import type { TagType } from '@/types/TagType';
  * Exposés en modèle front (TagType).
  */
 
-export async function fetchTags(): Promise<TagType[]> {
+export async function fetchTagsApi(): Promise<TagType[]> {
   const { data: res } = await axiosClient.get<{ data: StrapiTagType[] }>(
     '/api/strapi/tags',
   );
   return res.data.map(fromStrapiTag);
 }
 
-export async function createTagFront(body: {
+export async function postTagApi(body: {
   title: string;
   color?: string;
 }): Promise<TagType> {

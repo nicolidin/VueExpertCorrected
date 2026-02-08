@@ -6,12 +6,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "lib:buildPreview": "cd ../../../../Common/vue-lib-exo-nico-corrected && yarn build:watch",
+    "lib:buildPreview": "cd ../../../Common/vue-lib-exo-nico-corrected && yarn build:watch",
     "dev:lib": "LIB_DEV_MODE=true vite",
     "dev-full-run-lib": "(yarn run lib:buildPreview &) && yarn dev:lib",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
-    "full-install": "yarn install && npx install-peerdeps vue-lib-exo-corrected@1.0.0 --yarn"
+    "full-install": "yarn install && npx install-peerdeps vue-lib-exo-corrected@1.0.1-beta.2 --yarn"
   },
   "dependencies": {
     "axios": "^1.9.0",
@@ -24,7 +24,7 @@
     "uuid": "^9.0.0",
     "vue": "^3.0.0",
     "vue-i18n": "^9.14.2",
-    "vue-lib-exo-corrected": "1.0.1-beta.1",
+    "vue-lib-exo-corrected": "^1.0.1-beta.2",
     "vue-router": "^4.5.1",
     "vuedraggable": "^4.1.0",
     "vuetify": "^3.7.3",

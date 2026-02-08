@@ -1,5 +1,5 @@
 import { axiosClient } from '@/api/axios';
-import { fromStrapiNote } from '@/utils/strapiMappers';
+import { fromStrapiNote } from '@/mapper/strapiMappers';
 import type { StrapiNoteType } from '@/types/StrapiNoteType';
 import type { NoteType } from '@/types/NoteType';
 
@@ -8,14 +8,14 @@ import type { NoteType } from '@/types/NoteType';
  * Exposés en modèle front (NoteType).
  */
 
-export async function fetchCommunityPinnedNotes(): Promise<NoteType[]> {
+export async function fetchCommunityPinnedNotesApi(): Promise<NoteType[]> {
   const { data: res } = await axiosClient.get<{ data: StrapiNoteType[] }>(
     '/api/strapi/community-pinned-notes',
   );
   return res.data.map(fromStrapiNote);
 }
 
-export async function fetchCommunityPinnedNote(id: string): Promise<NoteType> {
+export async function fetchCommunityPinnedNoteApi(id: string): Promise<NoteType> {
   const { data: res } = await axiosClient.get<
     { data: StrapiNoteType } | StrapiNoteType
   >(`/api/strapi/community-pinned-notes/${id}`);

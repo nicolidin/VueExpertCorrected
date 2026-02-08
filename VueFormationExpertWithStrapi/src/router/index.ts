@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '@/views/Home.vue';
+import NotesIndex from '@/views/NotesIndex.vue';
 import About from '@/views/About.vue';
 import Note from '@/views/Note.vue';
 import IlsOntEcrit from '@/views/IlsOntEcrit.vue';
@@ -10,6 +11,11 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home,
+  },
+  {
+    path: '/notes',
+    name: 'NotesIndex',
+    component: NotesIndex,
   },
   {
     path: '/notes/:id',

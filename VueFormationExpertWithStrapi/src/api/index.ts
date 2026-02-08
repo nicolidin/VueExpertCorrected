@@ -1,12 +1,12 @@
 // API Strapi (notes, tags, community-pinned-notes)
 export {
-  fetchNotes,
-  fetchNote,
-  createNoteFront,
-  updateNoteFront,
+  fetchNotesApi,
+  fetchNoteApi,
+  postNoteApi,
+  updateNoteApi,
 } from './strapi/notes';
-export { fetchTags, createTagFront } from './strapi/tags';
+export { fetchTagsApi, postTagApi } from './strapi/tags';
 export {
-  fetchCommunityPinnedNotes,
-  fetchCommunityPinnedNote,
+  fetchCommunityPinnedNotesApi,
+  fetchCommunityPinnedNoteApi,
 } from './strapi/community-pinned-notes';

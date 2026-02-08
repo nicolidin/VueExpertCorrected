@@ -1,9 +1,13 @@
-import type { StrapiNoteType } from '@/types/StrapiNoteType';
+import type {
+  StrapiNoteType,
+  StrapiNotePayload,
+  NotePayloadInput,
+} from '@/types/StrapiNoteType';
 import type { StrapiTagType } from '@/types/StrapiTagType';
 import type { NoteType } from '@/types/NoteType';
 import type { TagType } from '@/types/TagType';
 
-/** Strapi -> front */
+/** Strapi → front */
 export function fromStrapiTag(raw: StrapiTagType): TagType {
   const nowIso = new Date().toISOString();
 
@@ -17,7 +21,7 @@ export function fromStrapiTag(raw: StrapiTagType): TagType {
   };
 }
 
-/** Strapi v4 : on expose documentId comme id front (pour GET/PUT une ressource) */
+/** Strapi → front (StrapiNoteType → NoteType) */
 export function fromStrapiNote(raw: StrapiNoteType): NoteType {
   return {
     id: raw.documentId ?? String(raw.id),
@@ -29,17 +33,11 @@ export function fromStrapiNote(raw: StrapiNoteType): NoteType {
   };
 }
 
-/** front -> Strapi (payload) */
-export function toStrapiNotePayload(
-  note: { contentMd: string; tagIds: string[] },
-  allTags: TagType[],
-) {
+/** front → Strapi (NoteType ou { contentMd, tagIds } → payload body pour POST/PUT) */
+export function toStrapiNotePayload(note: NotePayloadInput): StrapiNotePayload {
   const numericTagIds = note.tagIds
-    .map((id) => {
-      const t = allTags.find((tag) => tag.id === id);
-      return t ? Number(id) : null;
-    })
-    .filter((x): x is number => x !== null);
+    .map((id: string) => Number(id))
+    .filter((n: number) => !Number.isNaN(n));
 
   return {
     data: {

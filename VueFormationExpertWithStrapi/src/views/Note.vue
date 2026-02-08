@@ -15,13 +15,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed, ref, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { NoteEditor } from 'vue-lib-exo-corrected';
-import { updateNoteFront } from '@/api/strapi/notes';
+import { fetchNoteApi, updateNoteApi } from '@/api/strapi/notes';
+import { fetchTagsApi } from '@/api/strapi/tags';
 import { useNotesStore } from '@/stores/notes';
-import { useNote } from '@/composables/useNote';
-import { useTags } from '@/composables/useTags';
+import type { NoteType } from '@/types/NoteType';
 import type { TagType } from '@/types/TagType';
 
 const route = useRoute();
@@ -29,14 +29,37 @@ const router = useRouter();
 const noteId = () => route.params.id as string;
 const notesStore = useNotesStore();
 
-const { data: noteData, isLoading } = useNote(noteId);
-const { data: tagsData } = useTags();
+const noteData = ref<NoteType | null>(null);
+const isLoading = ref(true);
 
-watch(tagsData, (val) => {
-  if (val && notesStore.tags.length === 0) {
-    notesStore.setTags(val as TagType[]);
+async function loadNoteAndTags() {
+  const id = noteId();
+  isLoading.value = true;
+  try {
+    if (notesStore.tags.length === 0) {
+      const tags = await fetchTagsApi();
+      notesStore.setTags(tags as TagType[]);
+    }
+    const noteInStore = notesStore.notesById(id);
+    if (noteInStore) {
+      noteData.value = noteInStore;
+    } else {
+      try {
+        const note = await fetchNoteApi(id);
+        notesStore.addNote(note);
+        noteData.value = note;
+      } catch (error) {
+        console.error('Erreur lors du chargement de la note:', error);
+        noteData.value = null;
+      }
+    }
+  } finally {
+    isLoading.value = false;
   }
-}, { immediate: true });
+}
+
+onMounted(loadNoteAndTags);
+watch(() => route.params.id, loadNoteAndTags);
 
 const note = computed(
   () => noteData.value ?? notesStore.notesById(noteId()) ?? null,
@@ -44,11 +67,11 @@ const note = computed(
 
 const noteForEditor = computed(() => {
   const n = note.value;
-  if (!n) return { id: '', contentMd: '', tagsId: [] as string[] };
+  if (!n) return { id: '', contentMd: '', tagIds: [] as string[] };
   return {
     id: n.id,
     contentMd: n.contentMd,
-    tagsId: n.tagIds ?? [],
+    tagIds: n.tagIds ?? [],
   };
 });
 
@@ -60,16 +83,15 @@ async function handleUpdate(payload: {
   id: string;
   title: string;
   contentMd: string;
-  tagsId: string[];
+  tagIds: string[];
 }) {
   try {
-    const updated = await updateNoteFront(
+    const updated = await updateNoteApi(
       payload.id,
-      { contentMd: payload.contentMd, tagsId: payload.tagsId },
-      notesStore.tags,
+      { contentMd: payload.contentMd, tagIds: payload.tagIds },
     );
     notesStore.updateNote(updated);
-    router.push('/');
+    router.push('/notes');
   } catch (error) {
     console.error('Erreur lors de la mise à jour de la note:', error);
   }

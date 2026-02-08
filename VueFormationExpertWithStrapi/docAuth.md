@@ -954,13 +954,13 @@ Même principe que l'inscription, mais :
 │Composant│────▶│ API  │────▶│ Axios  │────▶│ Backend  │────▶│ MongoDB │
 │  Vue    │     │ Call │     │Intercep│     │Middleware│     │         │
 └─────────┘     └──────┘     └─────────┘     └──────────┘     └─────────┘
-  fetchNotes()   fetchNotes()  Ajoute Token   Vérifie Token    Query avec
+  fetchNotesApi()   fetchNotesApi()  Ajoute Token   Vérifie Token    Query avec
                                                                userId
 ```
 
 **Étapes détaillées** :
 
-1. **Composant appelle** → `fetchNotes()`
+1. **Composant appelle** → `fetchNotesApi()`
 2. **Axios intercepteur** → Ajoute `Authorization: Bearer <token>` automatiquement
 3. **Backend reçoit** → `GET /api/notes` avec header `Authorization`
 4. **authMiddleware** → Extrait token, vérifie avec `jwt.verify()`

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="notesLoading || tagsLoading" class="ils-ont-ecrit">
+  <div v-if="loading" class="ils-ont-ecrit">
     <p>Chargement…</p>
   </div>
   <div v-else class="ils-ont-ecrit">
@@ -12,23 +12,37 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { ListNote } from 'vue-lib-exo-corrected';
-import { useCommunityPinnedNotes } from '@/composables/useCommunityPinnedNotes';
-import { useTags } from '@/composables/useTags';
+import { fetchCommunityPinnedNotesApi } from '@/api/strapi/community-pinned-notes';
+import { fetchTagsApi } from '@/api/strapi/tags';
+import type { NoteType } from '@/types/NoteType';
 import type { TagType } from '@/types/TagType';
-import { getNotesWithTags } from '@/utils/noteWithTags';
+import { getNotesWithTags } from '@/service/noteWithTags';
 
 const router = useRouter();
-const { data: pinnedNotes, isLoading: notesLoading } =
-  useCommunityPinnedNotes();
-const { data: tagsResponse, isLoading: tagsLoading } = useTags();
+const pinnedNotes = ref<NoteType[] | null>(null);
+const tagsResponse = ref<TagType[] | null>(null);
+const loading = ref(true);
 
-const tags = computed(() => (tagsResponse.value ?? []) as TagType[]);
+onMounted(async () => {
+  try {
+    const [notes, tags] = await Promise.all([
+      fetchCommunityPinnedNotesApi(),
+      fetchTagsApi(),
+    ]);
+    pinnedNotes.value = notes;
+    tagsResponse.value = tags;
+  } finally {
+    loading.value = false;
+  }
+});
+
+const tags = computed(() => tagsResponse.value ?? []);
 
 const mappedNotes = computed(() => {
-  const list = Array.isArray(pinnedNotes.value) ? pinnedNotes.value : [];
+  const list = pinnedNotes.value ?? [];
   return getNotesWithTags(list, tags.value);
 });
 
