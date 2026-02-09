@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, watch } from 'vue';
+import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Layout, NoteEditor } from 'vue-lib-exo-corrected';
 import { fetchNoteApi, updateNoteApi } from '@/api/strapi/notes';
@@ -49,12 +49,7 @@ async function loadNote(): Promise<NoteType | null> {
   }
 }
 
-const { data, isLoading, execute } = useFetch<NoteType | null>(loadNote, {
-  autoExecute: false,
-});
-
-onMounted(() => execute());
-watch(() => route.params.id, () => execute());
+const { data, isLoading } = useFetch<NoteType | null>(loadNote);
 
 const note = computed(
   () => data.value ?? notesStore.notesById(noteId()) ?? null,

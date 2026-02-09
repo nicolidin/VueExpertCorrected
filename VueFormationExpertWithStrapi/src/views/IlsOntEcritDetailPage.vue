@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, watch } from 'vue';
+import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { Layout, NoteCard } from 'vue-lib-exo-corrected';
 import { fetchCommunityPinnedNoteApi } from '@/api/strapi/community-pinned-notes';
@@ -29,13 +29,10 @@ import { getNoteWithTags } from '@/service/noteWithTags';
 
 const route = useRoute();
 
-const { data, isLoading, execute } = useFetch<[NoteType, TagType[]]>(() => {
+const { data, isLoading } = useFetch<[NoteType, TagType[]]>(() => {
   const id = route.params.id as string;
   return Promise.all([fetchCommunityPinnedNoteApi(id), fetchTagsApi()]);
-}, { autoExecute: false });
-
-onMounted(() => execute());
-watch(() => route.params.id, () => execute());
+});
 
 const note = computed(() => data.value?.[0] ?? null);
 const tags = computed(() => data.value?.[1] ?? []);
