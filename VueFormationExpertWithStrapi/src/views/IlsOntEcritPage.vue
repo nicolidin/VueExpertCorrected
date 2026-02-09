@@ -14,34 +14,24 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue';
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { Layout, ListNote } from 'vue-lib-exo-corrected';
 import { fetchCommunityPinnedNotesApi } from '@/api/strapi/community-pinned-notes';
 import { fetchTagsApi } from '@/api/strapi/tags';
+import { useFetch } from '@/composables/useFetch';
 import type { NoteType } from '@/types/NoteType';
 import type { TagType } from '@/types/TagType';
 import { getNotesWithTags } from '@/service/noteWithTags';
 
 const router = useRouter();
-const pinnedNotes = ref<NoteType[] | null>(null);
-const tagsResponse = ref<TagType[] | null>(null);
-const loading = ref(true);
 
-onMounted(async () => {
-  try {
-    const [notes, tags] = await Promise.all([
-      fetchCommunityPinnedNotesApi(),
-      fetchTagsApi(),
-    ]);
-    pinnedNotes.value = notes;
-    tagsResponse.value = tags;
-  } finally {
-    loading.value = false;
-  }
-});
+const { data, isLoading } = useFetch<[NoteType[], TagType[]]>(() =>
+  Promise.all([fetchCommunityPinnedNotesApi(), fetchTagsApi()]),
+);
 
-const tags = computed(() => tagsResponse.value ?? []);
+const pinnedNotes = computed(() => data.value?.[0] ?? null);
+const tags = computed(() => data.value?.[1] ?? []);
 
 const mappedNotes = computed(() => {
   const list = pinnedNotes.value ?? [];

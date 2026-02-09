@@ -17,12 +17,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, watch } from 'vue';
+import { computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Layout, NoteEditor } from 'vue-lib-exo-corrected';
 import { fetchNoteApi, updateNoteApi } from '@/api/strapi/notes';
 import { fetchTagsApi } from '@/api/strapi/tags';
 import { useNotesStore } from '@/stores/notes';
+import { useFetch } from '@/composables/useFetch';
 import type { NoteType } from '@/types/NoteType';
 import type { TagType } from '@/types/TagType';
 
@@ -31,40 +32,32 @@ const router = useRouter();
 const noteId = () => route.params.id as string;
 const notesStore = useNotesStore();
 
-const noteData = ref<NoteType | null>(null);
-const isLoading = ref(true);
-
-async function loadNoteAndTags() {
+async function loadNote(): Promise<NoteType | null> {
   const id = noteId();
-  isLoading.value = true;
+  if (notesStore.tags.length === 0) {
+    const tags = await fetchTagsApi();
+    notesStore.setTags(tags as TagType[]);
+  }
+  const noteInStore = notesStore.notesById(id);
+  if (noteInStore) return noteInStore;
   try {
-    if (notesStore.tags.length === 0) {
-      const tags = await fetchTagsApi();
-      notesStore.setTags(tags as TagType[]);
-    }
-    const noteInStore = notesStore.notesById(id);
-    if (noteInStore) {
-      noteData.value = noteInStore;
-    } else {
-      try {
-        const note = await fetchNoteApi(id);
-        notesStore.addNote(note);
-        noteData.value = note;
-      } catch (error) {
-        console.error('Erreur lors du chargement de la note:', error);
-        noteData.value = null;
-      }
-    }
-  } finally {
-    isLoading.value = false;
+    const note = await fetchNoteApi(id);
+    notesStore.addNote(note);
+    return note;
+  } catch {
+    return null;
   }
 }
 
-onMounted(loadNoteAndTags);
-watch(() => route.params.id, loadNoteAndTags);
+const { data, isLoading, execute } = useFetch<NoteType | null>(loadNote, {
+  autoExecute: false,
+});
+
+onMounted(() => execute());
+watch(() => route.params.id, () => execute());
 
 const note = computed(
-  () => noteData.value ?? notesStore.notesById(noteId()) ?? null,
+  () => data.value ?? notesStore.notesById(noteId()) ?? null,
 );
 
 const noteForEditor = computed(() => {

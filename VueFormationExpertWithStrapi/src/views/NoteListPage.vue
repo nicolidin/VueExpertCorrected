@@ -32,13 +32,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue';
+import { computed, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
 import { Layout, ListNote, NoteCreation, SidebarTags } from 'vue-lib-exo-corrected';
 import { fetchNotesApi, postNoteApi } from '@/api/strapi/notes';
 import { fetchTagsApi, postTagApi } from '@/api/strapi/tags';
 import { useNotesStore } from '@/stores/notes';
+import { useFetch } from '@/composables/useFetch';
 import { useSearch } from '@/composables/useSearch';
 import type { NoteType } from '@/types/NoteType';
 import type { TagType } from '@/types/TagType';
@@ -50,17 +51,15 @@ const { filteredNotes: notesFilteredByTag } = storeToRefs(notesStore);
 const searchQuery = ref('');
 const { filteredNotes } = useSearch(notesFilteredByTag, searchQuery);
 
-const loading = ref(true);
-
-onMounted(async () => {
-  try {
+const { isLoading } = useFetch<[NoteType[], TagType[]]>(
+  async () => {
     const [notes, tags] = await Promise.all([fetchNotesApi(), fetchTagsApi()]);
-    notesStore.setNotes(notes as NoteType[]);
-    notesStore.mergeTags(tags as TagType[]);
-  } finally {
-    loading.value = false;
-  }
-});
+    notesStore.setNotes(notes);
+    notesStore.mergeTags(tags);
+    return [notes, tags];
+  },
+  { autoExecute: true },
+);
 
 const tagsData = computed(() =>
   notesStore.tags.map((tag) => ({

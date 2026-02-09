@@ -17,45 +17,28 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, watch } from 'vue';
+import { computed, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { Layout, NoteCard } from 'vue-lib-exo-corrected';
 import { fetchCommunityPinnedNoteApi } from '@/api/strapi/community-pinned-notes';
 import { fetchTagsApi } from '@/api/strapi/tags';
+import { useFetch } from '@/composables/useFetch';
 import type { NoteType } from '@/types/NoteType';
 import type { TagType } from '@/types/TagType';
 import { getNoteWithTags } from '@/service/noteWithTags';
 
 const route = useRoute();
-const noteId = () => route.params.id as string;
 
-const noteRes = ref<NoteType | null>(null);
-const tagsRes = ref<TagType[] | null>(null);
-const isLoading = ref(true);
+const { data, isLoading, execute } = useFetch<[NoteType, TagType[]]>(() => {
+  const id = route.params.id as string;
+  return Promise.all([fetchCommunityPinnedNoteApi(id), fetchTagsApi()]);
+}, { autoExecute: false });
 
-async function load() {
-  const id = noteId();
-  isLoading.value = true;
-  try {
-    const [note, tags] = await Promise.all([
-      fetchCommunityPinnedNoteApi(id),
-      fetchTagsApi(),
-    ]);
-    noteRes.value = note;
-    tagsRes.value = tags;
-  } catch {
-    noteRes.value = null;
-    tagsRes.value = null;
-  } finally {
-    isLoading.value = false;
-  }
-}
+onMounted(() => execute());
+watch(() => route.params.id, () => execute());
 
-onMounted(load);
-watch(() => route.params.id, load);
-
-const tags = computed(() => tagsRes.value ?? []);
-const note = computed(() => noteRes.value);
+const note = computed(() => data.value?.[0] ?? null);
+const tags = computed(() => data.value?.[1] ?? []);
 
 const mappedNote = computed(() => {
   const n = note.value;
