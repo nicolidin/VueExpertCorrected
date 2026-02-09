@@ -1,41 +1,41 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Home from '@/views/Home.vue';
-import NotesIndex from '@/views/NotesIndex.vue';
-import About from '@/views/About.vue';
-import Note from '@/views/Note.vue';
-import IlsOntEcrit from '@/views/IlsOntEcrit.vue';
-import IlsOntEcritDetail from '@/views/IlsOntEcritDetail.vue';
+import HomePage from '@/views/HomePage.vue';
+import NoteListPage from '@/views/NoteListPage.vue';
+import NoteEditPage from '@/views/NoteEditPage.vue';
+import AboutPage from '@/views/AboutPage.vue';
+import IlsOntEcritPage from '@/views/IlsOntEcritPage.vue';
+import IlsOntEcritDetailPage from '@/views/IlsOntEcritDetailPage.vue';
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home,
+    component: HomePage,
   },
   {
     path: '/notes',
-    name: 'NotesIndex',
-    component: NotesIndex,
+    name: 'NoteList',
+    component: NoteListPage,
   },
   {
     path: '/notes/:id',
-    name: 'Note',
-    component: Note,
+    name: 'NoteEdit',
+    component: NoteEditPage,
   },
   {
     path: '/ils-ont-ecrit',
     name: 'IlsOntEcrit',
-    component: IlsOntEcrit,
+    component: IlsOntEcritPage,
   },
   {
     path: '/ils-ont-ecrit/:id',
     name: 'IlsOntEcritDetail',
-    component: IlsOntEcritDetail,
+    component: IlsOntEcritDetailPage,
   },
   {
     path: '/about',
     name: 'About',
-    component: About,
+    component: AboutPage,
   },
 ];
 
