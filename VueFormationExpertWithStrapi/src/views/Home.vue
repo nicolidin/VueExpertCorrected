@@ -1,5 +1,6 @@
 <template>
-  <div class="home">
+  <Layout>
+    <div class="home">
     <h1 class="home__title">Bienvenue</h1>
     <nav class="home__nav">
       <RouterLink to="/notes" class="home__link">Mes notes</RouterLink>
@@ -8,11 +9,12 @@
       <NoteCard :note="{ contentMd: 'testttt' }" />
       <NewNoteCard :note="{ contentMd: 'testttt' }" />
     </nav>
-  </div>
+    </div>
+  </Layout>
 </template>
 
 <script setup lang="ts">
-import { NoteCard, NewNoteCard } from 'vue-lib-exo-corrected';
+import { Layout, NoteCard, NewNoteCard } from 'vue-lib-exo-corrected';
 </script>
 
 <style scoped lang="scss">

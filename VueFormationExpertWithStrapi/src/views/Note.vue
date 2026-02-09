@@ -1,23 +1,25 @@
 <template>
-  <div v-if="isLoading && !note" class="notes-detail">
-    <p>Chargement…</p>
-  </div>
-  <div v-else-if="!note" class="notes-detail">
-    <p>Note non trouvée.</p>
-  </div>
-  <div v-else class="notes-detail notes-detail--editing">
-    <NoteEditor
-      :note="noteForEditor"
-      :tags="tagsForEditor"
-      @update="handleUpdate"
-    />
-  </div>
+  <Layout>
+    <div v-if="isLoading && !note" class="notes-detail">
+      <p>Chargement…</p>
+    </div>
+    <div v-else-if="!note" class="notes-detail">
+      <p>Note non trouvée.</p>
+    </div>
+    <div v-else class="notes-detail notes-detail--editing">
+      <NoteEditor
+        :note="noteForEditor"
+        :tags="tagsForEditor"
+        @update="handleUpdate"
+      />
+    </div>
+  </Layout>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { NoteEditor } from 'vue-lib-exo-corrected';
+import { Layout, NoteEditor } from 'vue-lib-exo-corrected';
 import { fetchNoteApi, updateNoteApi } from '@/api/strapi/notes';
 import { fetchTagsApi } from '@/api/strapi/tags';
 import { useNotesStore } from '@/stores/notes';

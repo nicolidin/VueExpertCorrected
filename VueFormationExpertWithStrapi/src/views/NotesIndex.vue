@@ -1,32 +1,43 @@
 <template>
-  <div v-if="loading" class="notes-page">
-    <p>Chargement…</p>
-  </div>
-  <div v-else class="notes-page">
-    <NoteCreation
-      :tags="tagsData"
-      @create="handleCreateNote"
-      class="notes-page__note-creation"
-    />
-    <v-text-field
-      v-model="searchQuery"
-      placeholder="Rechercher dans les notes…"
-      density="comfortable"
-      hide-details
-      clearable
-      class="notes-page__search"
-    />
-    <ListNote :notes="mappedNotes" @note-click="handleNoteClick" />
-  </div>
+  <Layout>
+    <template #sidebar>
+      <SidebarTags
+        :model-value="true"
+        :tags="sidebarTagsData"
+        :permanent="true"
+        @tag-click="onTagClick"
+        @tag-create="handleTagCreate"
+      />
+    </template>
+    <div v-if="loading" class="notes-page">
+      <p>Chargement…</p>
+    </div>
+    <div v-else class="notes-page">
+      <NoteCreation
+        :tags="tagsData"
+        @create="handleCreateNote"
+        class="notes-page__note-creation"
+      />
+      <v-text-field
+        v-model="searchQuery"
+        placeholder="Rechercher dans les notes…"
+        density="comfortable"
+        hide-details
+        clearable
+        class="notes-page__search"
+      />
+      <ListNote :notes="mappedNotes" @note-click="handleNoteClick" />
+    </div>
+  </Layout>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
-import { ListNote, NoteCreation } from 'vue-lib-exo-corrected';
+import { Layout, ListNote, NoteCreation, SidebarTags } from 'vue-lib-exo-corrected';
 import { fetchNotesApi, postNoteApi } from '@/api/strapi/notes';
-import { fetchTagsApi } from '@/api/strapi/tags';
+import { fetchTagsApi, postTagApi } from '@/api/strapi/tags';
 import { useNotesStore } from '@/stores/notes';
 import { useSearch } from '@/composables/useSearch';
 import type { NoteType } from '@/types/NoteType';
@@ -59,6 +70,14 @@ const tagsData = computed(() =>
   })),
 );
 
+const sidebarTagsData = computed(() =>
+  notesStore.tags.map((tag) => ({
+    libelleName: tag.title,
+    isSelected: notesStore.selectedTagNames.includes(tag.title),
+    color: tag.color,
+  })),
+);
+
 const mappedNotes = computed(() =>
   getNotesWithTags(filteredNotes.value, notesStore.tags),
 );
@@ -78,6 +97,30 @@ async function handleCreateNote(noteData: {
 
 function handleNoteClick(note: { id: string }) {
   router.push(`/notes/${note.id}`);
+}
+
+function handleTagClick(tag: { libelleName: string; isSelected: boolean }) {
+  notesStore.setTagSelected(tag.libelleName, tag.isSelected);
+}
+
+async function handleTagCreate(payload: { title: string; color: string }) {
+  try {
+    const newTag = await postTagApi({
+      title: payload.title,
+      color: payload.color || '#9E9E9E',
+    });
+    notesStore.addTag(newTag);
+  } catch (e) {
+    console.error('Erreur lors de la création du tag:', e);
+  }
+}
+
+function onTagClick(tag: { libelleName: string; isSelected: boolean }) {
+  if (tag.libelleName === 'All Notes') {
+    notesStore.clearSelectedTags();
+  } else {
+    handleTagClick(tag);
+  }
 }
 </script>
 

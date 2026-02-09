@@ -1,5 +1,6 @@
 <template>
-  <div v-if="isLoading && !mappedNote" class="ils-ont-ecrit-detail">
+  <Layout>
+    <div v-if="isLoading && !mappedNote" class="ils-ont-ecrit-detail">
     <p>Chargement…</p>
   </div>
   <div v-else-if="mappedNote" class="ils-ont-ecrit-detail">
@@ -11,13 +12,14 @@
   <div v-else class="ils-ont-ecrit-detail">
     <p>Note non trouvée.</p>
     <router-link to="/ils-ont-ecrit">Retour à Ils ont écrit</router-link>
-  </div>
+    </div>
+  </Layout>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { NoteCard } from 'vue-lib-exo-corrected';
+import { Layout, NoteCard } from 'vue-lib-exo-corrected';
 import { fetchCommunityPinnedNoteApi } from '@/api/strapi/community-pinned-notes';
 import { fetchTagsApi } from '@/api/strapi/tags';
 import type { NoteType } from '@/types/NoteType';
