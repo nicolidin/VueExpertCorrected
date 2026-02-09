@@ -4,22 +4,22 @@ import type { StrapiNoteType } from '@/types/StrapiNoteType';
 import type { NoteType } from '@/types/NoteType';
 
 /**
- * Appels API Strapi - Notes (via proxy /api/strapi/notes)
- * Exposés en modèle front (NoteType).
+ * Appels API Strapi - Notes (baseURL = Strapi, chemins /api/notes).
  */
 
 export async function fetchNotesApi(): Promise<NoteType[]> {
-  const { data: res } = await axiosClient.get<{ data: StrapiNoteType[] }>(
-    '/api/strapi/notes',
+  const { data: res } = await axiosClient.get<{ data?: StrapiNoteType[] }>(
+    '/api/notes',
     { params: { 'pagination[pageSize]': 10000 } },
   );
-  return res.data.map(fromStrapiNote);
+  const list = res?.data ?? [];
+  return Array.isArray(list) ? list.map(fromStrapiNote) : [];
 }
 
 /** id = documentId Strapi (pour GET une ressource) */
 export async function fetchNoteApi(id: string): Promise<NoteType> {
   const { data: res } = await axiosClient.get<{ data: StrapiNoteType } | StrapiNoteType>(
-    `/api/strapi/notes/${id}`,
+    `/api/notes/${id}`,
   );
   const raw = (res as { data?: StrapiNoteType }).data ?? (res as StrapiNoteType);
   return fromStrapiNote(raw);
@@ -34,7 +34,7 @@ export async function postNoteApi(
   const formatedContentMd = `# ${payload.title}\n\n${payload.contentMd}`;
 
   const { data: res } = await axiosClient.post<{ data: StrapiNoteType }>(
-    '/api/strapi/notes',
+    '/api/notes',
     toStrapiNotePayload({
       contentMd: formatedContentMd,
       tagIds: payload.tagIds,
@@ -44,7 +44,7 @@ export async function postNoteApi(
 }
 
 /**
- * Mise à jour d'une note (PUT /api/strapi/notes/:documentId)
+ * Mise à jour d'une note (PUT /api/notes/:documentId)
  * id = documentId Strapi
  */
 export async function updateNoteApi(
@@ -52,7 +52,7 @@ export async function updateNoteApi(
   payload: { contentMd: string; tagIds: string[] },
 ): Promise<NoteType> {
   const { data: res } = await axiosClient.put<{ data: StrapiNoteType }>(
-    `/api/strapi/notes/${id}`,
+    `/api/notes/${id}`,
     toStrapiNotePayload({
       contentMd: payload.contentMd,
       tagIds: payload.tagIds,

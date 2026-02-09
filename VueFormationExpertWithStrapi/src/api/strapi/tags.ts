@@ -4,15 +4,15 @@ import type { StrapiTagType } from '@/types/StrapiTagType';
 import type { TagType } from '@/types/TagType';
 
 /**
- * Appels API Strapi - Tags (via proxy /api/strapi/tags)
- * Exposés en modèle front (TagType).
+ * Appels API Strapi - Tags (baseURL = Strapi, chemins /api/tags).
  */
 
 export async function fetchTagsApi(): Promise<TagType[]> {
-  const { data: res } = await axiosClient.get<{ data: StrapiTagType[] }>(
-    '/api/strapi/tags',
+  const { data: res } = await axiosClient.get<{ data?: StrapiTagType[] }>(
+    '/api/tags',
   );
-  return res.data.map(fromStrapiTag);
+  const list = res?.data ?? [];
+  return Array.isArray(list) ? list.map(fromStrapiTag) : [];
 }
 
 export async function postTagApi(body: {
@@ -20,7 +20,7 @@ export async function postTagApi(body: {
   color?: string;
 }): Promise<TagType> {
   const { data: res } = await axiosClient.post<{ data: StrapiTagType }>(
-    '/api/strapi/tags',
+    '/api/tags',
     { data: body },
   );
   return fromStrapiTag(res.data);
