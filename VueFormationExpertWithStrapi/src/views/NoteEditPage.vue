@@ -8,8 +8,8 @@
     </div>
     <div v-else class="notes-detail notes-detail--editing">
       <NoteEditor
-        :note="noteForEditor"
-        :tags="tagsForEditor"
+        :note="note"
+        :tags="notesStore.tags"
         @update="handleUpdate"
       />
     </div>
@@ -29,11 +29,11 @@ import type { TagType } from '@/types/TagType';
 
 const route = useRoute();
 const router = useRouter();
-const noteId = () => route.params.id as string;
+const noteId = route.params.id
 const notesStore = useNotesStore();
 
 async function loadNote(): Promise<NoteType | null> {
-  const id = noteId();
+  const id = noteId;
   if (notesStore.tags.length === 0) {
     const tags = await fetchTagsApi();
     notesStore.setTags(tags as TagType[]);
@@ -49,25 +49,7 @@ async function loadNote(): Promise<NoteType | null> {
   }
 }
 
-const { data, isLoading } = useFetch<NoteType | null>(loadNote);
-
-const note = computed(
-  () => data.value ?? notesStore.notesById(noteId()) ?? null,
-);
-
-const noteForEditor = computed(() => {
-  const n = note.value;
-  if (!n) return { id: '', contentMd: '', tagIds: [] as string[] };
-  return {
-    id: n.id,
-    contentMd: n.contentMd,
-    tagIds: n.tagIds ?? [],
-  };
-});
-
-const tagsForEditor = computed(() =>
-  notesStore.tags.map((t) => ({ id: t.id, title: t.title, color: t.color })),
-);
+const { data: note, isLoading } = useFetch<NoteType | null>(loadNote);
 
 async function handleUpdate(payload: {
   id: string;
