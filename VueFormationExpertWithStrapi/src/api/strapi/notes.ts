@@ -1,6 +1,6 @@
 import { axiosClient } from '@/api/axios';
-import { fromStrapiNote, toStrapiNotePayload } from '@/mapper/strapiMappers';
-import type { StrapiNoteType } from '@/types/StrapiNoteType';
+import { fromStrapiNote, toStrapiNoteWrite } from '@/mapper/strapiMappers';
+import type { StrapiNoteReadDTO } from '@/types/StrapiNoteType';
 import type { NoteType } from '@/types/NoteType';
 
 /**
@@ -8,7 +8,7 @@ import type { NoteType } from '@/types/NoteType';
  */
 
 export async function fetchNotesApi(): Promise<NoteType[]> {
-  const { data: res } = await axiosClient.get<{ data?: StrapiNoteType[] }>(
+  const { data: res } = await axiosClient.get<{ data?: StrapiNoteReadDTO[] }>(
     '/api/notes',
     { params: { 'pagination[pageSize]': 10000 } },
   );
@@ -18,10 +18,10 @@ export async function fetchNotesApi(): Promise<NoteType[]> {
 
 /** id = documentId Strapi (pour GET une ressource) */
 export async function fetchNoteApi(id: string): Promise<NoteType> {
-  const { data: res } = await axiosClient.get<{ data: StrapiNoteType } | StrapiNoteType>(
+  const { data: res } = await axiosClient.get<{ data: StrapiNoteReadDTO } | StrapiNoteReadDTO>(
     `/api/notes/${id}`,
   );
-  const raw = (res as { data?: StrapiNoteType }).data ?? (res as StrapiNoteType);
+  const raw = (res as { data?: StrapiNoteReadDTO }).data ?? (res as StrapiNoteReadDTO);
   return fromStrapiNote(raw);
 }
 
@@ -33,9 +33,9 @@ export async function postNoteApi(
 ): Promise<NoteType> {
   const formatedContentMd = `# ${payload.title}\n\n${payload.contentMd}`;
 
-  const { data: res } = await axiosClient.post<{ data: StrapiNoteType }>(
+  const { data: res } = await axiosClient.post<{ data: StrapiNoteReadDTO }>(
     '/api/notes',
-    toStrapiNotePayload({
+    toStrapiNoteWrite({
       contentMd: formatedContentMd,
       tagIds: payload.tagIds,
     }),
@@ -51,9 +51,9 @@ export async function updateNoteApi(
   id: string,
   payload: { contentMd: string; tagIds: string[] },
 ): Promise<NoteType> {
-  const { data: res } = await axiosClient.put<{ data: StrapiNoteType }>(
+  const { data: res } = await axiosClient.put<{ data: StrapiNoteReadDTO }>(
     `/api/notes/${id}`,
-    toStrapiNotePayload({
+    toStrapiNoteWrite({
       contentMd: payload.contentMd,
       tagIds: payload.tagIds,
     }),

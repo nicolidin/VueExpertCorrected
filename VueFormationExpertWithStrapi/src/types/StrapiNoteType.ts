@@ -1,7 +1,5 @@
-import type { NoteType } from '@/types/NoteType';
-
 // Forme brute renvoyée par Strapi pour une note
-export type StrapiNoteType = {
+export type StrapiNoteReadDTO = {
   id: number;
   documentId?: string;
   contentMd?: string;
@@ -12,14 +10,9 @@ export type StrapiNoteType = {
 };
 
 /** Payload envoyé à Strapi pour create/update (body de POST/PUT) */
-export type StrapiNotePayload = {
+export type StrapiNoteWriteDTO = {
   data: {
     contentMd: string;
     tagIds: number[] | null;
   };
 };
-
-/** Données acceptées pour construire le payload Strapi (note complète ou champs create/update) */
-export type NotePayloadInput =
-  | NoteType
-  | Pick<NoteType, 'contentMd' | 'tagIds'>;

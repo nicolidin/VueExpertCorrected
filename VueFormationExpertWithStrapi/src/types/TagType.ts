@@ -1,4 +1,4 @@
-// Modèle front utilisé par le store + lib
+// Modèle front utilisé par le store
 export type TagType = {
   id: string; // identifiant front (documentId)
   title: string;

@@ -1,7 +1,6 @@
-// Modèle front utilisé par le store + lib
-// id = documentId Strapi v4 (pour GET/PUT une ressource), mappé dans strapiMappers
+// Modèle front utilisé par le front (store, page, etc..)
 export type NoteType = {
-  id: string;
+  id: string; // docId de strapi
   contentMd: string;
   tagIds: string[]; // ids de TagType côté front (string)
   createdAt: string;

@@ -1,7 +1,6 @@
 import type {
-  StrapiNoteType,
-  StrapiNotePayload,
-  NotePayloadInput,
+  StrapiNoteReadDTO,
+  StrapiNoteWriteDTO,
 } from '@/types/StrapiNoteType';
 import type { StrapiTagType } from '@/types/StrapiTagType';
 import type { NoteType } from '@/types/NoteType';
@@ -22,7 +21,7 @@ export function fromStrapiTag(raw: StrapiTagType): TagType {
 }
 
 /** Strapi → front (StrapiNoteType → NoteType) */
-export function fromStrapiNote(raw: StrapiNoteType): NoteType {
+export function fromStrapiNote(raw: StrapiNoteReadDTO): NoteType {
   return {
     id: raw.documentId ?? String(raw.id),
     contentMd: raw.contentMd ?? '',
@@ -34,7 +33,7 @@ export function fromStrapiNote(raw: StrapiNoteType): NoteType {
 }
 
 /** front → Strapi (NoteType ou { contentMd, tagIds } → payload body pour POST/PUT) */
-export function toStrapiNotePayload(note: NotePayloadInput): StrapiNotePayload {
+export function toStrapiNoteWrite(note: NoteType): StrapiNoteWriteDTO {
   const numericTagIds = note.tagIds
     .map((id: string) => Number(id))
     .filter((n: number) => !Number.isNaN(n));
