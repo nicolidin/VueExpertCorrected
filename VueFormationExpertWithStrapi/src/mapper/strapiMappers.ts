@@ -11,7 +11,7 @@ export function fromStrapiTag(raw: StrapiTagType): TagType {
   const nowIso = new Date().toISOString();
 
   return {
-    id: String(raw.id),
+    id: raw.documentId,
     title: raw.title ?? '',
     color: raw.color ?? '#9E9E9E',
     createdAt: raw.createdAt ?? nowIso,
@@ -23,9 +23,9 @@ export function fromStrapiTag(raw: StrapiTagType): TagType {
 /** Strapi → front (StrapiNoteType → NoteType) */
 export function fromStrapiNote(raw: StrapiNoteReadDTO): NoteType {
   return {
-    id: raw.documentId ?? String(raw.id),
+    id: raw.documentId ,
     contentMd: raw.contentMd ?? '',
-    tagIds: (raw.tagIds ?? []).map(String),
+    tagIds: raw.tagIds ?? [],
     createdAt: raw.createdAt ?? '',
     updatedAt: raw.updatedAt ?? '',
     publishedAt: raw.publishedAt ?? '',
@@ -33,15 +33,13 @@ export function fromStrapiNote(raw: StrapiNoteReadDTO): NoteType {
 }
 
 /** front → Strapi (NoteType ou { contentMd, tagIds } → payload body pour POST/PUT) */
-export function toStrapiNoteWrite(note: NoteType): StrapiNoteWriteDTO {
-  const numericTagIds = note.tagIds
-    .map((id: string) => Number(id))
-    .filter((n: number) => !Number.isNaN(n));
+export function toStrapiNote(note: NoteType): StrapiNoteWriteDTO {
+  const tagIds = (note.tagIds ?? []).filter((id) => id.trim().length > 0);
 
   return {
     data: {
       contentMd: note.contentMd,
-      tagIds: numericTagIds.length > 0 ? numericTagIds : null,
+      tagIds: tagIds.length > 0 ? tagIds : null,
     },
   };
 }

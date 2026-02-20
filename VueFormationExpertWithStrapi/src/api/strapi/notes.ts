@@ -1,5 +1,5 @@
 import { axiosClient } from '@/api/axios';
-import { fromStrapiNote, toStrapiNoteWrite } from '@/mapper/strapiMappers';
+import { fromStrapiNote, toStrapiNote } from '@/mapper/strapiMappers';
 import type { StrapiNoteReadDTO } from '@/types/StrapiNoteType';
 import type { NoteType } from '@/types/NoteType';
 
@@ -35,7 +35,7 @@ export async function postNoteApi(
 
   const { data: res } = await axiosClient.post<{ data: StrapiNoteReadDTO }>(
     '/api/notes',
-    toStrapiNoteWrite({
+    toStrapiNote({
       contentMd: formatedContentMd,
       tagIds: payload.tagIds,
     }),
@@ -53,7 +53,7 @@ export async function updateNoteApi(
 ): Promise<NoteType> {
   const { data: res } = await axiosClient.put<{ data: StrapiNoteReadDTO }>(
     `/api/notes/${id}`,
-    toStrapiNoteWrite({
+    toStrapiNote({
       contentMd: payload.contentMd,
       tagIds: payload.tagIds,
     }),
