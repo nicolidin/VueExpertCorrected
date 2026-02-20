@@ -17,3 +17,4 @@ export type StrapiNoteWriteDTO = {
     tagIds: string[] | null;
   };
 };
+

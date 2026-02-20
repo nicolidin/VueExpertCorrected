@@ -1,5 +1,5 @@
 import { computed, type Ref, type ComputedRef } from 'vue'
-import type { NoteType } from '@/types/NoteType'
+import type { NoteType } from '@/types/Domain/NoteType'
 
 export function useSearch(
   notes: Ref<NoteType[]>,

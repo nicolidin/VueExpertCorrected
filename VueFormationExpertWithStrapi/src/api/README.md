@@ -30,4 +30,4 @@ import {
 } from '@/api';
 ```
 
-Les réponses sont mappées en modèles front (NoteType, TagType) via les mappers dans `@/mapper/strapiMappers`.
+Les réponses sont mappées en modèles front (NoteType, TagType) via les mappers dans `@/mapper/strapi/*`.

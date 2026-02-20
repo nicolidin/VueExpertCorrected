@@ -1,7 +1,7 @@
 import { axiosClient } from '@/api/axios';
-import { fromStrapiTag, toStrapiTagWrite } from '@/mapper/strapiMappers';
-import type { StrapiTagReadDTO } from '@/types/StrapiTagType';
-import type { TagType } from '@/types/TagType';
+import { fromStrapiTag, toStrapiTagWrite } from '@/mapper/strapi/tags';
+import type { TagType } from '@/types/Domain/TagType';
+import type { StrapiTagReadDTO } from '@/types/Strapi/StrapiTagType';
 
 /**
  * Appels API Strapi - Tags (baseURL = Strapi, chemins /api/tags).

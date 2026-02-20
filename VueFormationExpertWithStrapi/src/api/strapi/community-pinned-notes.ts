@@ -1,7 +1,7 @@
 import { axiosClient } from '@/api/axios';
-import { fromStrapiNote } from '@/mapper/strapiMappers';
-import type { StrapiNoteReadDTO } from '@/types/StrapiNoteType';
-import type { NoteType } from '@/types/NoteType';
+import { fromStrapiNote } from '@/mapper/strapi/notes';
+import type { NoteType } from '@/types/Domain/NoteType';
+import type { StrapiNoteReadDTO } from '@/types/Strapi/StrapiNoteType';
 
 /**
  * Appels API Strapi - Community Pinned Notes (baseURL = Strapi, /api/community-pinned-notes).

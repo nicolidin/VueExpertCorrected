@@ -1,7 +1,7 @@
 import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
-import type { NoteType } from '@/types/NoteType';
-import type { TagType } from '@/types/TagType';
+import type { NoteType } from '@/types/Domain/NoteType';
+import type { TagType } from '@/types/Domain/TagType';
 
 export type NotesState = {
   notes: Array<NoteType>;

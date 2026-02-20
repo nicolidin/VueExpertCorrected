@@ -16,3 +16,4 @@ export type StrapiTagWriteDTO = {
     color?: string;
   };
 };
+

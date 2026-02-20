@@ -1,7 +1,7 @@
 import { axiosClient } from '@/api/axios';
-import { fromStrapiNote, toStrapiNoteWrite } from '@/mapper/strapiMappers';
-import type { StrapiNoteReadDTO } from '@/types/StrapiNoteType';
-import type { NoteType } from '@/types/NoteType';
+import { fromStrapiNote, toStrapiNoteWrite } from '@/mapper/strapi/notes';
+import type { NoteType } from '@/types/Domain/NoteType';
+import type { StrapiNoteReadDTO } from '@/types/Strapi/StrapiNoteType';
 
 /**
  * Appels API Strapi - Notes (baseURL = Strapi, chemins /api/notes).

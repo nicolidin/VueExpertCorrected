@@ -7,3 +7,4 @@ export type TagType = {
   updatedAt: string;
   publishedAt: string;
 };
+

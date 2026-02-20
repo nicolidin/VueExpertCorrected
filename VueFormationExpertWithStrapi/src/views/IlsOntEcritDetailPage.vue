@@ -23,8 +23,8 @@ import { Layout, NoteCard } from 'vue-lib-exo-corrected';
 import { fetchCommunityPinnedNoteApi } from '@/api/strapi/community-pinned-notes';
 import { fetchTagsApi } from '@/api/strapi/tags';
 import { useFetch } from '@/composables/useFetch';
-import type { NoteType } from '@/types/NoteType';
-import type { TagType } from '@/types/TagType';
+import type { NoteType } from '@/types/Domain/NoteType';
+import type { TagType } from '@/types/Domain/TagType';
 import { getNoteWithTags } from '@/service/noteWithTags';
 
 const route = useRoute();

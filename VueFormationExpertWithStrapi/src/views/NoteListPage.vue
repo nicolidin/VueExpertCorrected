@@ -41,8 +41,8 @@ import { fetchTagsApi, postTagApi } from '@/api/strapi/tags';
 import { useNotesStore } from '@/stores/notes';
 import { useFetch } from '@/composables/useFetch';
 import { useSearch } from '@/composables/useSearch';
-import type { NoteType } from '@/types/NoteType';
-import type { TagType } from '@/types/TagType';
+import type { NoteType } from '@/types/Domain/NoteType';
+import type { TagType } from '@/types/Domain/TagType';
 import { getNotesWithTags } from '@/service/noteWithTags';
 
 const router = useRouter();
