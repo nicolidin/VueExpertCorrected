@@ -2,12 +2,12 @@ import type {
   StrapiNoteReadDTO,
   StrapiNoteWriteDTO,
 } from '@/types/StrapiNoteType';
-import type { StrapiTagType } from '@/types/StrapiTagType';
+import type { StrapiTagReadDTO, StrapiTagWriteDTO } from '@/types/StrapiTagType';
 import type { NoteType } from '@/types/NoteType';
 import type { TagType } from '@/types/TagType';
 
 /** Strapi → front */
-export function fromStrapiTag(raw: StrapiTagType): TagType {
+export function fromStrapiTag(raw: StrapiTagReadDTO): TagType {
   const nowIso = new Date().toISOString();
 
   return {
@@ -33,7 +33,7 @@ export function fromStrapiNote(raw: StrapiNoteReadDTO): NoteType {
 }
 
 /** front → Strapi (NoteType ou { contentMd, tagIds } → payload body pour POST/PUT) */
-export function toStrapiNote(note: NoteType): StrapiNoteWriteDTO {
+export function toStrapiNoteWrite(note: NoteType): StrapiNoteWriteDTO {
   const tagIds = (note.tagIds ?? []).filter((id) => id.trim().length > 0);
 
   return {
@@ -42,4 +42,12 @@ export function toStrapiNote(note: NoteType): StrapiNoteWriteDTO {
       tagIds: tagIds.length > 0 ? tagIds : null,
     },
   };
+}
+
+/** front → Strapi (payload body pour POST/PUT) */
+export function toStrapiTagWrite(tag: {
+  title: string;
+  color?: string;
+}): StrapiTagWriteDTO {
+  return { data: tag };
 }

@@ -1,6 +1,6 @@
 import { axiosClient } from '@/api/axios';
-import { fromStrapiTag } from '@/mapper/strapiMappers';
-import type { StrapiTagType } from '@/types/StrapiTagType';
+import { fromStrapiTag, toStrapiTagWrite } from '@/mapper/strapiMappers';
+import type { StrapiTagReadDTO } from '@/types/StrapiTagType';
 import type { TagType } from '@/types/TagType';
 
 /**
@@ -8,7 +8,7 @@ import type { TagType } from '@/types/TagType';
  */
 
 export async function fetchTagsApi(): Promise<TagType[]> {
-  const { data: res } = await axiosClient.get<{ data?: StrapiTagType[] }>(
+  const { data: res } = await axiosClient.get<{ data?: StrapiTagReadDTO[] }>(
     '/api/tags',
   );
   const list = res?.data ?? [];
@@ -19,9 +19,9 @@ export async function postTagApi(body: {
   title: string;
   color?: string;
 }): Promise<TagType> {
-  const { data: res } = await axiosClient.post<{ data: StrapiTagType }>(
+  const { data: res } = await axiosClient.post<{ data: StrapiTagReadDTO }>(
     '/api/tags',
-    { data: body },
+    toStrapiTagWrite(body),
   );
   return fromStrapiTag(res.data);
 }
