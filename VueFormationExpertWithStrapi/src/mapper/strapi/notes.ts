@@ -17,7 +17,7 @@ export function fromStrapiNote(raw: StrapiNoteReadDTO): NoteType {
 }
 
 /** front → Strapi (payload body pour POST/PUT) */
-export function toStrapiNoteWrite(note: NoteType): StrapiNoteWriteDTO {
+export function toStrapiNote(note: NoteType): StrapiNoteWriteDTO {
   const tagIds = (note.tagIds ?? []).filter((id) => id.trim().length > 0);
 
   return {

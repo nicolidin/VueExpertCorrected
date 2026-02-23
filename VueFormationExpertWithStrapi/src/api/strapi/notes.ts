@@ -1,5 +1,5 @@
 import { axiosClient } from '@/api/axios';
-import { fromStrapiNote, toStrapiNoteWrite } from '@/mapper/strapi/notes';
+import { fromStrapiNote, toStrapiNote } from '@/mapper/strapi/notes';
 import type { NoteType } from '@/types/Domain/NoteType';
 import type { StrapiNoteReadDTO } from '@/types/Strapi/StrapiNoteType';
 
@@ -29,16 +29,11 @@ export async function fetchNoteApi(id: string): Promise<NoteType> {
  * API métier côté front : payload "front" (tagIds) → formatage titre + payload Strapi → POST.
  */
 export async function postNoteApi(
-  payload: { title: string; contentMd: string; tagIds: string[] },
+  payload: NoteType
 ): Promise<NoteType> {
-  const formatedContentMd = `# ${payload.title}\n\n${payload.contentMd}`;
-
   const { data: res } = await axiosClient.post<{ data: StrapiNoteReadDTO }>(
     '/api/notes',
-    toStrapiNoteWrite({
-      contentMd: formatedContentMd,
-      tagIds: payload.tagIds,
-    }),
+    toStrapiNote(payload),
   );
   return fromStrapiNote(res.data);
 }
@@ -49,14 +44,11 @@ export async function postNoteApi(
  */
 export async function updateNoteApi(
   id: string,
-  payload: { contentMd: string; tagIds: string[] },
+  payload: NoteType,
 ): Promise<NoteType> {
   const { data: res } = await axiosClient.put<{ data: StrapiNoteReadDTO }>(
     `/api/notes/${id}`,
-    toStrapiNoteWrite({
-      contentMd: payload.contentMd,
-      tagIds: payload.tagIds,
-    }),
+    toStrapiNote(payload),
   );
   return fromStrapiNote(res.data);
 }

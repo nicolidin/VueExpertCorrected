@@ -19,7 +19,7 @@ export function fromStrapiTag(raw: StrapiTagReadDTO): TagType {
 }
 
 /** front → Strapi (payload body pour POST/PUT) */
-export function toStrapiTagWrite(tag: {
+export function toStrapiTag(tag: {
   title: string;
   color?: string;
 }): StrapiTagWriteDTO {
