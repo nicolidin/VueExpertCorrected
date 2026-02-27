@@ -44,6 +44,7 @@ import { useSearch } from '@/composables/useSearch';
 import type { NoteType } from '@/types/Domain/NoteType';
 import type { TagType } from '@/types/Domain/TagType';
 import { getNotesWithTags } from '@/service/noteWithTags';
+import {appendContentToTitle} from "@/services/markdownUtils.ts";
 
 const router = useRouter();
 const notesStore = useNotesStore();
@@ -87,9 +88,7 @@ async function handleCreateNote(noteData: {
   tagIds: string[];
 }) {
   try {
-    const fullContentMd = noteData.title.trim()
-        ? `# ${noteData.title.trim()}\n\n${noteData.contentMd ?? ''}`
-        : (noteData.contentMd ?? '')
+    const fullContentMd = appendContentToTitle(noteData.contentMd, noteData.title);
 
     const newNote = await postNoteApi({
       ...noteData,
