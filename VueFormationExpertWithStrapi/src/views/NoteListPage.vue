@@ -87,7 +87,14 @@ async function handleCreateNote(noteData: {
   tagIds: string[];
 }) {
   try {
-    const newNote = await postNoteApi(noteData);
+    const fullContentMd = noteData.title.trim()
+        ? `# ${noteData.title.trim()}\n\n${noteData.contentMd ?? ''}`
+        : (noteData.contentMd ?? '')
+
+    const newNote = await postNoteApi({
+      ...noteData,
+      contentMd: fullContentMd,
+    })
     notesStore.addNote(newNote);
   } catch (error) {
     console.error('Erreur lors de la création de la note:', error);
